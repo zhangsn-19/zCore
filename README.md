@@ -1,263 +1,68 @@
-# zCore
+# OSZcoreArm
 
-[![CI](https://github.com/rcore-os/zCore/workflows/CI/badge.svg?branch=master)](https://github.com/rcore-os/zCore/actions)
-[![Docs](https://img.shields.io/badge/docs-alpha-blue)](https://rcore-os.github.io/zCore/)
-[![Coverage Status](https://coveralls.io/repos/github/rcore-os/zCore/badge.svg?branch=master)](https://coveralls.io/github/rcore-os/zCore?branch=master)
+## os大实验小组文档
 
-Reimplement [Zircon][zircon] microkernel in safe Rust as a userspace program!
+> OS-F-3 张书宁 王星淇 徐晨曦
 
-## Dev Status
+### 一. 项目目标
 
-🚧 Working In Progress
+在树莓派(Raspberry Pi 4b) 板上运行 zCore (Armv8a, CortexA72)，并支持 zCore/zircon 下安全的若干应用。
 
-- 2020.04.16: Zircon console is working on zCore! 🎉
+#### 阶段性目标
 
-## Quick start for RISCV64
+0. 完成小实验 (2021Autumn rCore/zCore)
 
-```sh
-make riscv-image
-cd zCore
-make run ARCH=riscv64 LINUX=1
-```
+1. 在 Riscv/x86 平台上运行 zCore/rCore/其他相关操作系统仓库，感受 rust 编写的不同操作系统在不同平台上的驱动、调用、中断、堆栈和地址安排等实现方式。
+2. 在 Qemu-arm 平台上运行 rCore/其他相关操作系统仓库，感受 rust 如何在 ARM 平台上运行，相关驱动和地址安排如何规定等。
+3. 在 Qemu-arm 平台上适配 zCore。具体的，我们需要修改包括 kernel-hal, config 文件在内的一系列底层实现，使原本的 zCore 框架能够适配在 ARM 平台上，这里的检验方式是使其能够在 Qemu-arm 平台上运行。
+4. 在树莓派（Raspberry Pi 4b) 板上适配 zCore。具体的，这里和 Qemu-arm 平台应该较为相似，但可能会由于硬件和版本原因有一定具体实现上的不同，可能在物理板上还需要一定的调试。
+5. 在树莓派（Raspberry Pi 4b) 板上运行尽可能多的应用，根据应用的不同，需求的文件系统和系统调用的不同可能会需要向现有的 ARM 版本 zCore 中支持更多的 feature和功能。
 
-## Getting started
+#### 当前进度
 
-Environments：
+- 阅读了 zCore 的 Aarch 部分参考驱动和参考代码，ARM的相关文档，进行了其他文献调研。
+- 在 x86 平台完成了zCore 运行
+- 构建出了QEMU的ARM虚拟机并成功跑通了前人的工作 (NimbOS, https://github.com/rvm-rtos/nimbos)
+- 正在将小实验 rCore 移植到ARM平台
+- 正在调试 zCore 在ARM平台的驱动部分
+- 正在确认树莓派对应的 ARMv8 对驱动和系统调用的规定和需求
 
-* [Rust toolchain](http://rustup.rs)
-* [QEMU](https://www.qemu.org)
-* [Git LFS](https://git-lfs.github.com)
+#### 参考文档和实现帮助
 
-### Developing environment info
+rCore https://github.com/rcore-os/rCore
 
-- current rustc -- rustc 1.60.0-nightly (5e57faa78 2022-01-19)
-- current rust-toolchain -- nightly-2022-01-20
-- current qemu -- 5.2.0 -> 6.2.0
+zCore https://rcore-os.github.io/zCore-Tutorial/zcore-intro.html
 
-Clone repo and pull prebuilt fuchsia images:
+zCore 教程 https://rcore-os.github.io/zCore-Tutorial/zcore-intro.html
 
-```sh
-git clone https://github.com/rcore-os/zCore --recursive
-cd zCore
-git lfs install
-git lfs pull
-```
+rCore 教程 https://rcore-os.github.io/rCore-Tutorial-Book-v3/index.html
 
-For users in China, there's a mirror you can try:
+nimbOS  https://github.com/rvm-rtos/nimbos
 
-```sh
-git clone https://github.com.cnpmjs.org/rcore-os/zCore --recursive
-```
-### Run zcore in libos mode
-#### Run zcore in linux-libos mode
-* step 1: Prepare Alpine Linux rootfs:
+#### 小组分工
 
-  ```sh
-  make rootfs
-  ```
+##### 张书宁
 
-* step 2: Compile & Run native Linux program (Busybox) in libos mode:
+###### 本阶段
 
-  ```sh
-  cargo run --release --features "linux libos" -- /bin/busybox [args]
-  ```
+###### 下一阶段
 
-  You can also add the feature `graphic` to show the graphical output (with [sdl2](https://www.libsdl.org) installed).
+完成 zCore 驱动部分的 rust 实现和调试。
 
-  To debug, set the `LOG` environment variable to one of `error`, `warn`, `info`, `debug`, `trace`.
+##### 王星淇
 
-#### Run native Zircon program (shell) in zircon-libos mode:
+###### 本阶段
 
-* step 1: Compile and Run Zircon shell
+###### 下一阶段
 
-  ```sh
-  cargo run --release --features "zircon libos" -- prebuilt/zircon/x64/bringup.zbi
-  ```
+##### 徐晨曦
 
-  The `graphic` and `LOG` options are the same as Linux.
+###### 本阶段
 
-### Run zcore in bare-metal mode
-#### Run Linux shell in  linux-bare-metal mode:
+###### 下一阶段
 
-* step 1: Prepare Alpine Linux rootfs:
 
-  ```sh
-  make rootfs
-  ```
 
-* step 2: Create Linux rootfs image:
+#### 鸣谢
 
-  Note: Before below step, you can add some special apps in zCore/rootfs
-
-  ```sh
-  make image
-  ```
-
-* step 3: Build and run zcore in  linux-bare-metal mode:
-
-  ```sh
-  cd zCore && make run MODE=release LINUX=1 [LOG=warn] [GRAPHIC=on] [ACCEL=1]
-  ```
-
-#### Run Zircon shell in zircon-bare-metal mode:
-
-* step 1: Build and run zcore in  zircon-bare-metal mode:
-
-  ```sh
-  cd zCore && make run MODE=release [LOG=warn] [GRAPHIC=on] [ACCEL=1]
-  ```
-
-* step 2: Build and run your own Zircon user programs:
-
-  ```sh
-  # See template in zircon-user
-  cd zircon-user && make zbi MODE=release
-
-  # Run your programs in zCore
-  cd zCore && make run MODE=release USER=1 [LOG=warn] [GRAPHIC=on] [ACCEL=1]
-  ```
-
-## Testing
-### LibOS Mode Testing
-
-#### Zircon related
-
-Run Zircon official core-tests:
-
-```sh
-pip3 install pexpect
-cd scripts && python3 unix-core-testone.py 'Channel.*'
-```
-
-Run all (non-panicked) core-tests for CI:
-
-```sh
-pip3 install pexpect
-cd scripts && python3 unix-core-tests.py
-# Check `zircon/test-result.txt` for results.
-```
-
-#### Linux related
-
-Run Linux musl libc-tests for CI:
-
-```sh
-make rootfs && make libc-test
-cd scripts && python3 libos-libc-tests.py
-# Check `linux/test-result.txt` for results.
-```
-
-### Bare-metal Mode Testing
-#### Zircon related
-
-Run Zircon official core-tests on bare-metal:
-
-```sh
-cd zCore && make test MODE=release [ACCEL=1] TEST_FILTER='Channel.*'
-```
-
-Run all (non-panicked) core-tests for CI:
-
-```sh
-pip3 install pexpect
-cd scripts && python3 core-tests.py
-# Check `zircon/test-result.txt` for results.
-```
-
-#### x86-64 Linux related
-
-Run Linux musl libc-tests for CI:
-```sh
-##  Prepare rootfs with libc-test apps
-make baremetal-test-img
-## Build zCore kernel
-cd zCore && make build MODE=release LINUX=1 ARCH=x86_64
-## Testing
-cd scripts && python3 baremetal-libc-test.py
-##
-```
-
-You can use [`scripts/baremetal-libc-test-ones.py`](./scripts/baremetal-libc-test-ones.py) & [`scripts/linux/baremetal-test-ones.txt`](./scripts/linux/baremetal-test-ones.txt) to test specified apps.
-
-[`scripts/linux/baremetal-test-fail.txt`](./scripts/linux/baremetal-test-fail.txt) includes all failed x86-64 apps (We need YOUR HELP to fix bugs!)
-
-#### riscv-64 Linux related
-
-Run Linux musl libc-tests for CI:
-```sh
-##  Prepare rootfs with libc-test & oscomp apps
-make riscv-image
-## Build zCore kernel & Testing
-cd scripts && python3 baremetal-test-riscv64.py
-##
-```
-
-You can use[ `scripts/baremetal-libc-test-ones-riscv64.py`](./scripts/baremetal-libc-test-ones-riscv64.py) & [`scripts/linux/baremetal-test-ones-rv64.txt`](scripts/linux/baremetal-test-ones-rv64.txt)to test
-specified apps.
-
-[`scripts/linux/baremetal-test-fail-riscv64.txt`](./scripts/linux/baremetal-test-fail-riscv64.txt)includes all failed riscv-64 apps (We need YOUR HELP to fix bugs!)
-
-## Graph/Game
-
-snake game: https://github.com/rcore-os/rcore-user/blob/master/app/src/snake.c
-
-### Step1: compile usr app
-We can use musl-gcc compile it in x86_64 mode
-
-### Step2: change zcore for run snake app first.
-change zCore/zCore/main.rs L176
-vec!["/bin/busybox".into(), "sh".into()]
-TO
-vec!["/bin/snake".into(), "sh".into()]
-
-### Step3: prepare root fs image, run zcore in linux-bare-metal mode
-exec:
-
-```sh
-cd zCore #zCore ROOT DIR
-make rootfs
-cp ../rcore-user/app/snake rootfs/bin #copy snake ELF file to rootfs/bin
-make image # build rootfs image
-cd zCore #zCore kernel dir
-make run MODE=release LINUX=1 GRAPHIC=on
-```
-
-Then you can play the game.
-Operation
-
-- Keyboard
-  - `W`/`A`/`S`/`D`: Move
-  - `R`: Restart
-  - `ESC`: End
-- Mouse
-  - `Left`: Speed up
-  - `Right`: Slow down
-  - `Middle`: Pause/Resume
-
-## Doc
-```
-make doc
-```
-### RISC-V 64 porting info
-
-- [porting riscv64 doc](./docs/porting-rv64.md)
-## Components
-
-### Overview
-
-![](./docs/structure.svg)
-
-[zircon]: https://fuchsia.googlesource.com/fuchsia/+/master/zircon/README.md
-[kernel-objects]: https://github.com/PanQL/zircon/blob/master/docs/objects.md
-[syscalls]: https://github.com/PanQL/zircon/blob/master/docs/syscalls.md
-
-### Hardware Abstraction Layer
-
-|                           | Bare Metal | Linux / macOS     |
-| :------------------------ | ---------- | ----------------- |
-| Virtual Memory Management | Page Table | Mmap              |
-| Thread Management         | `executor` | `async-std::task` |
-| Exception Handling        | Interrupt  | Signal            |
-
-### Small Goal & Little Plans
-- https://github.com/rcore-os/zCore/wiki/Plans
+感谢清华大学计算机系操作系统课程的陈渝，向勇，李国良等老师和张译仁，贾越凯，安之达等同学的帮助和支持。
