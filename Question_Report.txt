@@ -1,0 +1,63 @@
+Due 4.16
+1.
+make[5]: x86_64-linux-musl-gcc: Command not found
+make[5]: x86_64-linux-musl-gcc: Command not found
+make[5]: *** [CMakeFiles/ulib.dir/build.make:77: CMakeFiles/ulib.dir/lib/assert.c.o] Error 127
+make[5]: *** [CMakeFiles/ulib.dir/build.make:72: CMakeFiles/ulib.dir/lib/arch/x86_64/clone.S.o] Error 127
+make[5]: *** [CMakeFiles/ulib.dir/build.make:142: CMakeFiles/ulib.dir/lib/string.c.o] Error 127
+make[5]: x86_64-linux-musl-gcc: Command not found
+make[5]: *** [CMakeFiles/ulib.dir/build.make:129: CMakeFiles/ulib.dir/lib/stdlib.c.o] Error 127
+Refer to : https://zhuanlan.zhihu.com/p/106621926
+2. Materials
+https://github.com/rust-embedded/cortex-a
+https://developer.arm.com/documentation/den0024/a/
+https://docs.rs/crate/cortex-a/2.5.0
+https://developer.arm.com/documentation/100940/0101/
+https://developer.arm.com/documentation/den0024/a/ARMv8-Registers?lang=en
+https://github.com/oscomp/proj183-xiaomi-zcore-teeos
+https://www.macs.hw.ac.uk/~hwloidl/Courses/F28HS/Docu/DEN0013D_cortex_a_series_PG.pdf
+3. proxy
+[net]
+git-fetch-with-cli = true
+https://blog.csdn.net/weixin_39640262/article/details/110661479
+
+
+Due 4.23
+问题解决：
+1.musl 编译不通过
+https://github.com/rust-lang/rust/pull/24777
+https://stackoverflow.com/questions/31770604/how-to-generate-statically-linked-executables
+https://zhuanlan.zhihu.com/p/106621926
+https://www.openwall.com/lists/musl/2017/10/29/2
+https://github.com/joohoi/acme-dns/issues/156
+
+2.Rust-objcopy command not found
+https://github.com/rcore-os/rCore-Tutorial/issues/78
+cargo install cargo-binutils
+rustup component add llvm-tools-preview
+
+3. error: "/usr/lib/rustlib/src/rust/Cargo.lock" does not exist, unable to build with the standard libr
+
+4. kill 线程需求
+https://blog.csdn.net/andy572633/article/details/7211546
+
+5. QEMU对于 aarch64 的支持
+arm-softmmu,aarch64-softmmu
+http://cdn.kernel.org/pub/linux/kernel/people/will/docs/qemu/qemu-arm64-howto.html
+https://wiki.qemu.org/Documentation/Platforms/ARM
+
+6. make: rcore-fs-fuse: Command not found
+cargo install rcore-fs-fuse --git https://github.com/rcore-os/rcore-fs
+https://github.com/rcore-os/rcore-fs/issues/19
+
+
+仓库：
+zCore 仓库：https://github.com/rcore-os/zCore
+zCore ARM 仓库：https://github.com/Luchangcheng2333/zCore
+源仓库：https://mirrors4.tuna.tsinghua.edu.cn/help/crates.io-index.git/
+Rust-lang ：http://web.mit.edu/rust-lang_v1.25/arch/amd64_ubuntu1404/share/doc/rust/html/cargo/guide/creating-a-new-project.html
+rCore Book：https://rcore-os.github.io/rCore-Tutorial-Book-v3/chapter0/5setup-devel-env.html#rust
+RaspBerry-embedded：https://github.com/rust-embedded/rust-raspberrypi-OS-tutorials
+树莓派烧录：https://blog.csdn.net/meihualing/article/details/110268054
+
+
