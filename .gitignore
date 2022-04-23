@@ -10,6 +10,7 @@ Cargo.lock
 /prebuilt/linux/aarch64/*
 zCore/src/platform/riscv/boot/kernel-vars.ld
 zCore/disk/*
+/toolchain
 *.img
 *.log
 .idea
